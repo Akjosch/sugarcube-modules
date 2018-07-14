@@ -1,0 +1,81 @@
+:: macro-show js [script]
+
+Macro.add("show", {
+    handler: function() {
+        if(this.args.length === 0) {
+            return this.error('no selector specified');
+        }
+        var targets = jQuery(this.args[0]);
+        if(targets.length === 0) {
+            return this.error(`no elements matched the selector "${this.args[0]}"`);
+        }
+        debugger;
+        var transition = this.args.length > 1 && /^(?:transition|t8n)$/.test(this.args[1]);
+        if(transition) {
+            targets
+                .removeClass("hidden").css("display", "")
+                .addClass("macro-show-insert macro-show-in");
+            setTimeout(function() {
+                targets.removeClass("macro-show-in");
+            }, Engine.minDomActionDelay);
+        } else {
+            targets
+                .removeClass("hidden").css("display", "")
+                .addClass("macro-show-insert");
+        }
+    }
+})
+
+Macro.add("linkshow", {
+    isAsync : true,
+    handler: function() {
+        if(this.args.length === 0) {
+            return this.error("no link text specified");
+        }
+        if(this.args.length === 1) {
+            return this.error("no selector specified");
+        }
+        var targetsSelector = this.args[1]; 
+        var link = jQuery(document.createElement('a'));
+        var transition = this.args.length > 2 && /^(?:transition|t8n)$/.test(this.args[2]);
+        link
+            .wikiWithOptions({ profile : "core" }, this.args[0])
+            .addClass(`link-internal macro-linkshow`)
+            .ariaClick(
+                {namespace: ".macros", one: true},
+                this.createShadowWrapper(function() {
+                    link.wrap(`<span class="macro-linkshow"></span>`).replaceWith(function() { return link.html(); });
+                    var targets = jQuery(targetsSelector);
+                    if(transition) {
+                        targets
+                            .removeClass("hidden").css("display", "")
+                            .addClass("macro-linkshow-insert macro-linkshow-in");
+                        setTimeout(function() {
+                            targets.removeClass("macro-linkshow-in");
+                        }, Engine.minDomActionDelay);
+                    } else {
+                        targets
+                            .removeClass("hidden").css("display", "")
+                            .addClass("macro-linkshow-insert");
+                    }
+                }
+            ))
+            .appendTo(this.output);
+    }
+})
+
+:: macro-show css [stylesheet]
+
+.hidden {
+	display: none;
+}
+
+.macro-linkshow-insert,
+.macro-show-insert {
+	transition: opacity 400ms ease-in;
+}
+
+.macro-linkshow-in,
+.macro-show-in {
+	opacity: 0;
+}
