@@ -79,3 +79,9 @@ Macro.add("linkshow", {
 .macro-show-in {
 	opacity: 0;
 }
+
+:: macro-show example
+
+<p>This is a paragraph with some words in it. But what's this? <<linkshow "A link?" "#inconspicuous-paragraph" transition>> Maybe when you click it, something happens...</p>
+<p id="inconspicuous-paragraph" class="hidden">Wow! This inconspicuous paragraph appeared! It used to have a custom class that only contained {{{display: none}}} and maybe a transition, but I guess clicking that link got rid of that.</p>
+<p>Oh, well. There's so much to do! And so little time...</p> 
