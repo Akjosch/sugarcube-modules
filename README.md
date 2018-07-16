@@ -16,8 +16,8 @@ All modules are written with an UMD-like wrapper, which means they can be either
 
 * module/items.js
 
-  Some basic item implementation for RPG-like games. Badly in need of documentation.
+  Some basic item implementation for RPG-like games. Badly in need of documentation. Currently requires lodash and SugarCube.
   
 * module/random.js
 
-  Simple random distribution classes for continuous distributions, suitable for procedural generation or other random sampling where the precise form of the distribution is important. Supported distributions are uniform, normal, skewed normal, gamma, triangular and Kumaraswamy.
+  Simple random distribution classes for continuous distributions, suitable for procedural generation or other random sampling where the precise form of the distribution is important. Supported distributions are uniform, normal, skewed normal, gamma, triangular and Kumaraswamy. Should be independent from the running environment.
