@@ -21,45 +21,48 @@
  *   // A triangular distribution between 0 and 100, with the mode (most common value) of 24
  *   var triangle = new Random.TriangularDistribution(0, 24, 100);
  *
+ *   // A Kumaraswamy distribution this a = 1.2, b = 5
+ *   var kumaraswamy = new Random.KumaraswamyDistribution(1.2, 5);
+ *
  *   All the distributions support the following methods:
  *
  *   sample()
  *   - Take one sample value from the distribution, at random, using JavaScript's built-in Math.random() method.
  *
- *     The usage of Math.random() means that the upper bounds of the uniform and triangular distributions
- *     are exclusive - they can never be returned - since the underlying random number generator generates
- *     numbers in the range of 0 (inclusive) to 1 (exclusive).
+ *	 The usage of Math.random() means that the upper bounds of the uniform and triangular distributions
+ *	 are exclusive - they can never be returned - since the underlying random number generator generates
+ *	 numbers in the range of 0 (inclusive) to 1 (exclusive).
  *
  *   sample(randomFunction)
  *   - Take one sample value from the distribution using randomFunction() to provide the underlying value.
  *
- *     The random function is expected to return a value between 0 and 1. The returned random values are
- *     only (at best) as well distributed as the random function allows.
+ *	 The random function is expected to return a value between 0 and 1. The returned random values are
+ *	 only (at best) as well distributed as the random function allows.
  *
- *     Example:
- *     var normal = new Random.NormalDistribution(10, 2);
- *     var result = normal.sample(function() { return 0.42; });
- *     console.log(result);
+ *	 Example:
+ *	 var normal = new Random.NormalDistribution(10, 2);
+ *	 var result = normal.sample(function() { return 0.42; });
+ *	 console.log(result);
  *
- *     Warning: some of the random generation functions use rejection sampling. If provided with insufficiently
- *     random function, they can take a long time to find a valid value. In the worst case, they might never
- *     terminate the processing.
+ *	 Warning: some of the random generation functions use rejection sampling. If provided with insufficiently
+ *	 random function, they can take a long time to find a valid value. In the worst case, they might never
+ *	 terminate the processing.
  */
  
 (function (root, factory) {
-    if(typeof define === 'function' && define.amd) {
-        // AMD. Register as an anonymous module.
-        define([], factory);
+	if(typeof define === 'function' && define.amd) {
+		// AMD. Register as an anonymous module.
+		define([], factory);
 	} else if(typeof exports === 'object') {
-        // Node, CommonJS-like
-        module.exports = factory();
+		// Node, CommonJS-like
+		module.exports = factory();
 	} else if(typeof setup === 'object') {
 		// SugarCube globals
 		setup.Random = factory();
-    } else {
-        // Browser globals
-        root.Random = factory();
-    }
+	} else {
+		// Browser globals
+		root.Random = factory();
+	}
 }(typeof self !== 'undefined' ? self : this, function() {
 	var UniformDistribution = (function() {
 		var dist = function(lim1, lim2) {
@@ -237,11 +240,29 @@
 		return dist;
 	})();
 	
+	var KumaraswamyDistribution = (function() {
+		var dist = function(alpha, beta) {
+			if(alpha <= 0 || beta <= 0) {
+				throw "Both parameters need to be larger than zero";
+			}
+			this.alpha = alpha;
+			this.beta = beta;
+		};
+		dist.prototype.sample = function(rnd) {
+			rnd = rnd || Math.random;
+			var p = rnd();
+			return Math.power(1 - Math.power(1 - p, 1 / this.alpha), 1 / this.beta);
+		};
+	   
+		return dist;
+	})();
+	
 	return {
 		UniformDistribution: UniformDistribution,
 		NormalDistribution: NormalDistribution,
 		SkewNormalDistribution: SkewNormalDistribution,
 		GammaDistribution: GammaDistribution,
 		TriangularDistribution: TriangularDistribution,
+		KumaraswamyDistribution: KumaraswamyDistribution,
 	};
 }));
