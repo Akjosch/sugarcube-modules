@@ -1,0 +1,100 @@
+:: macro-pronouns js [script]
+
+/*
+ * Simple pronoun macros (and related things).
+ * 
+ * Use like <<they>>, <<them>>, <<their>>, <<theirs>>, <<themselves>> and capitalized versions of it.
+ * If used without a parameter, checks the gender for $PC, else the provided parameter:
+ * <<them _character>> can result in "him", "her" or "it", for example.
+ * 
+ * The reason for <<they>> and not <<he>> or <<she>> is that both have multiple usages
+ * covered with a single variant. <<her>> can be "him" or "his" if used on a male character
+ * and <<his>> can be "her" or "hers" when used on a female one.
+ *
+ * Modify (in particular in regards to the aliases and supported macros) to fit your game.
+ *
+ * Supported gendered macros (and their aliases)
+ * # Pronouns:
+ *   <<they>> = <<he>> = <<she>>
+ *   <<They>> = <<He>> = <<She>>
+ *   <<them>> = <<herhim>>
+ *   <<Them>> = <<Herhim>>
+ *   <<their>> = <<herhis>>
+ *   <<Their>> = <<Herhis>>
+ *   <<theirs>> = <<hershis>>
+ *   <<Theirs>> = <<Hershis>>
+ *   <<themselves>> = <<himself>> = <<herself>> = <<themself>>
+ *   <<Themselves>> = <<Himself>> = <<Herself>> = <<Themself>>
+ * # Other gendered nouns:
+ *   <<wife>> = <<husband>>
+ *   <<woman>> = <<man>>
+ *   <<girl>> = <<boy>> = <<child>>
+*/
+
+(function() {
+	// Predefined internal data structure to speed up lookup. The order is:
+	// subjective, objective, dependent possessive, independent possessive, reflexive
+	// + capitalized variants
+	const pronouns = {
+		"he":   ["he",   "him",  "his",   "his",    "himself",    "He",   "Him",  "His",   "His",    "Himself",    "husband", "man",      "boy"],
+		"she":  ["she",  "her",  "her",   "hers",   "herself",    "She",  "Her",  "Her",   "Hers",   "Herself",    "wife",    "woman",    "girl"],
+		"it":   ["it",   "it",   "its",   "its",    "itself",     "It",   "It",   "Its",   "Its",    "Itself",     "partner", "person", "child"],
+		"one":  ["one",  "one",  "one's", "one's",  "oneself",    "One",  "One",  "One's", "One's",  "Oneself",    "partner", "someone",  "a child"],
+		// "Singular they"
+		"they": ["they", "them", "their", "theirs", "themselves", "They", "Them", "Their", "Theirs", "Themselves", "partner", "someone",  "child"],
+	};
+	
+	// Assumes the "gender" attribute is "male" or "female", and supports an optional "pronoun" attribute to override it.
+	// Change to fit how your game determines someone's pronouns
+	const getBasePronoun = (character) => {
+		if(!character) { return "one"; /* OMG what are you doing?!? */ }
+		if(character.pronoun) { return character.pronoun; } // Specific pronoun
+		if(character.gender == "male") { return "he"; }
+		return "she";
+	};
+	
+	// Returns the $PC if not set. Expand as necessary to fit your game.
+	const getRelevantCharacter = (character) => {
+		return character || State.variables.PC;
+	};
+	
+	const internalOutput = (output, character, index) => {
+		output.appendChild(document.createTextNode(pronouns[getBasePronoun(getRelevantCharacter(character))][index]));
+	};
+	
+	Macro.add('they',       { handler() { internalOutput(this.output, this.args[0],  0); } });
+	Macro.add('them',       { handler() { internalOutput(this.output, this.args[0],  1); } });
+	Macro.add('their',      { handler() { internalOutput(this.output, this.args[0],  2); } });
+	Macro.add('theirs',     { handler() { internalOutput(this.output, this.args[0],  3); } });
+	Macro.add('themselves', { handler() { internalOutput(this.output, this.args[0],  4); } });
+	Macro.add('They',       { handler() { internalOutput(this.output, this.args[0],  5); } });
+	Macro.add('Them',       { handler() { internalOutput(this.output, this.args[0],  6); } });
+	Macro.add('Their',      { handler() { internalOutput(this.output, this.args[0],  7); } });
+	Macro.add('Theirs',     { handler() { internalOutput(this.output, this.args[0],  8); } });
+	Macro.add('Themselves', { handler() { internalOutput(this.output, this.args[0],  9); } });
+	Macro.add('wife',       { handler() { internalOutput(this.output, this.args[0], 10); } });
+	Macro.add('woman',      { handler() { internalOutput(this.output, this.args[0], 11); } });
+	Macro.add('girl',       { handler() { internalOutput(this.output, this.args[0], 12); } });
+
+	// Aliases
+	Macro.add('he',       'they');
+	Macro.add('He',       'They');
+	Macro.add('she',      'they');
+	Macro.add('She',      'They');
+	Macro.add('herhim',   'them');
+	Macro.add('Herhim',   'Them');
+	Macro.add('herhis',   'their');
+	Macro.add('Herhis',   'Their');
+	Macro.add('hershis',  'theirs');
+	Macro.add('Hershis',  'Theirs');
+	Macro.add('himself',  'themselves');
+	Macro.add('herself',  'themselves');
+	Macro.add('themself', 'themselves');
+	Macro.add('Himself',  'Themselves');
+	Macro.add('Herself',  'Themselves');
+	Macro.add('Themself', 'Themselves');
+	Macro.add('husband',  'wife');
+	Macro.add('man',      'woman');
+	Macro.add('boy',      'girl');
+	Macro.add('child',    'girl');
+})();
