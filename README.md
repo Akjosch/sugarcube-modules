@@ -1,4 +1,4 @@
-A bunch of random mostly self-contained modules and macros for SugarCube, in Twee format
+A bunch of random mostly self-contained modules and macros for SugarCube 2, in Twee format
 
 # Macros
 
@@ -21,3 +21,6 @@ All modules are written with an UMD-like wrapper, which means they can be either
 * module/random.js
 
   Simple random distribution classes for continuous distributions, suitable for procedural generation or other random sampling where the precise form of the distribution is important. Supported distributions are uniform, normal, skewed normal, gamma, triangular and Kumaraswamy. Should be independent from the running environment.
+
+For more bits and pieces of re-usable SugarCube 2 code, see also:
+* https://github.com/ChapelR/custom-macros-for-sugarcube-2
