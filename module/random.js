@@ -251,7 +251,7 @@
 		dist.prototype.sample = function(rnd) {
 			rnd = rnd || Math.random;
 			var p = rnd();
-			return Math.power(1 - Math.power(1 - p, 1 / this.alpha), 1 / this.beta);
+			return Math.pow(1 - Math.pow(1 - p, 1 / this.alpha), 1 / this.beta);
 		};
 	   
 		return dist;
